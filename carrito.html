@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Carrito de Compras</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card-img-top {
+      object-fit: cover;
+      height: 200px;
+    }
+
+    body {
+      background-color: #E292E5;
+    }
+
+    .card {
+      border-color: black;
+      border-width: 0.050cm;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <nav class="bg-white shadow">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="index.html" class="flex items-center space-x-2 text-xl font-bold">
+        <img src="gghdbh.jpg" alt="Logo" class="h-10">
+        <span>Crochetlandia</span>
+      </a>
+      <ul class="hidden md:flex space-x-6 items-center">
+        <li class="relative group">
+          <button class="hover:underline">Productos</button>
+          <ul class="absolute hidden group-hover:block bg-white shadow-md rounded mt-2 w-48 text-left z-10">
+            <li><a href="animales.html" class="block px-4 py-2 hover:bg-gray-100">Animales</a></li>
+            <li><a href="halloween.html" class="block px-4 py-2 hover:bg-gray-100">Halloween</a></li>
+            <li><a href="navidad.html" class="block px-4 py-2 hover:bg-gray-100">Navidad</a></li>
+            <li><hr class="my-1"></li>
+            <li><a href="todasCat.html" class="block px-4 py-2 hover:bg-gray-100">Ver todas las categorías</a></li>
+          </ul>
+        </li>
+        <li><a href="perfil.html" class="hover:underline">Perfil</a></li>
+        <li><a href="#" class="hover:underline">Contacto</a></li>
+        <li class="relative">
+          <a href="carrito.html" class="hover:underline">
+            🛒 Carrito
+            <span id="cart-count" class="absolute -top-2 -right-4 bg-red-600 text-white rounded-full text-xs px-2 py-0.5">0</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container mx-auto my-10 px-4">
+    <h2 class="text-2xl font-bold mb-6">Carrito de Compras</h2>
+    <div id="carritoContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+  </main>
+
+  <script>
+    const contenedor = document.getElementById("carritoContainer");
+
+    function renderCarrito() {
+      const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+      contenedor.innerHTML = "";
+
+      if (carrito.length === 0) {
+        contenedor.innerHTML = '<p class="text-gray-600">Tu carrito está vacío.</p>';
+      } else {
+        carrito.forEach((producto, index) => {
+          const card = document.createElement("div");
+          card.innerHTML = `
+            <div class="relative bg-white rounded shadow p-4 border border-black">
+              <button class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl" onclick="eliminarProducto(${index})">❌</button>
+              <img src="${producto.imagen}" class="w-full h-[200px] object-cover rounded" alt="${producto.titulo}">
+              <div class="mt-4">
+                <h5 class="text-lg font-semibold">${producto.titulo}</h5>
+                <p class="text-gray-700">$${producto.precio} MXN</p>
+              </div>
+            </div>
+          `;
+          contenedor.appendChild(card);
+        });
+      }
+
+      actualizarContador();
+    }
+
+    function eliminarProducto(index) {
+      const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+      carrito.splice(index, 1);
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+      renderCarrito();
+    }
+
+    function actualizarContador() {
+      const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+      const cartCount = document.getElementById('cart-count');
+      if (cartCount) {
+        cartCount.textContent = carrito.length;
+      }
+    }
+
+    renderCarrito();
+  </script>
+</body>
+
+</html>

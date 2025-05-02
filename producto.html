@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle del Producto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #E292E5;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <nav class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="index.html" class="flex items-center space-x-2 text-xl font-bold">
+        <img src="gghdbh.jpg" alt="Logo" class="h-10">
+        <span>Crochetlandia</span>
+      </a>
+      <ul class="hidden md:flex space-x-6 items-center">
+        <li class="relative group">
+          <button class="hover:underline">Productos</button>
+          <ul class="absolute hidden group-hover:block bg-white shadow-md rounded mt-2 w-48 text-left z-10">
+            <li><a href="animales.html" class="block px-4 py-2 hover:bg-gray-100">Animales</a></li>
+            <li><a href="halloween.html" class="block px-4 py-2 hover:bg-gray-100">Halloween</a></li>
+            <li><a href="navidad.html" class="block px-4 py-2 hover:bg-gray-100">Navidad</a></li>
+            <li><hr class="my-1"></li>
+            <li><a href="todasCat.html" class="block px-4 py-2 hover:bg-gray-100">Ver todas las categorías</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="hover:underline">Ofertas</a></li>
+        <li><a href="#" class="hover:underline">Contacto</a></li>
+        <li class="relative">
+          <a href="carrito.html" class="hover:underline">
+            🛒 Carrito
+            <span id="cart-count" class="absolute -top-2 -right-4 bg-red-600 text-white rounded-full text-xs px-2 py-0.5">0</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container mx-auto my-10 px-4">
+    <div id="productoDetalle" class="max-w-3xl mx-auto w-full"></div>
+  </main>
+
+  <script>
+    const producto = JSON.parse(localStorage.getItem("producto"));
+
+    if (producto) {
+      document.getElementById("productoDetalle").innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg mb-6">
+          <div class="md:flex">
+            <div class="md:w-1/2">
+              <img src="${producto.imagen}" class="w-full h-[300px] object-cover rounded-t-lg md:rounded-l-lg" alt="${producto.titulo}">
+            </div>
+            <div class="md:w-1/2 p-6 flex flex-col justify-between">
+              <div>
+                <h3 class="text-3xl font-semibold text-gray-900">${producto.titulo}</h3>
+                <p class="text-green-600 text-2xl font-bold">$${producto.precio} MXN</p>
+              </div>
+              <button id="agregarCarr" class="bg-yellow-300 text-black py-2 px-6 rounded-md mt-4 hover:bg-yellow-400 transition-colors">Agregar al carrito</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      let vistos = JSON.parse(localStorage.getItem("vistos")) || [];
+      vistos = vistos.filter(p => p.titulo !== producto.titulo);
+      vistos.unshift(producto);
+      vistos = vistos.slice(0, 10);
+      localStorage.setItem("vistos", JSON.stringify(vistos));
+
+    } else {
+      document.getElementById("productoDetalle").innerHTML = '<div class="alert alert-warning text-center p-4 text-xl">No se encontró información del producto.</div>';
+    }
+
+    document.getElementById("agregarCarr").addEventListener("click", () => {
+      let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+      carrito.push(producto);
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+      alert("Producto agregado al carrito");
+
+      const cartCount = document.getElementById('cart-count');
+      if (cartCount) {
+        cartCount.textContent = carrito.length;
+      }
+    });
+
+  </script>
+
+  <script>
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const cartCount = document.getElementById('cart-count');
+    if (cartCount) {
+      cartCount.textContent = carrito.length;
+    }
+  </script>
+
+</body>
+
+</html>

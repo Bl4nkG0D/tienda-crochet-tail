@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Página Principal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .recent-items {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .recent-items .item {
+            flex: 0 0 auto;
+            width: 200px;
+            margin-right: 1rem;
+        }
+
+        .slider-btn {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        .slider-container {
+            position: relative;
+        }
+
+        .slider-controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 3.6em;
+            line-height: 1.2em;
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            object-position: center;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-[#E292E5]">
+
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-xl font-bold">
+                <img src="gghdbh.jpg" alt="Logo" class="h-10">
+                <span>Crochetlandia</span>
+            </a>
+            <ul class="hidden md:flex space-x-6 items-center">
+                <li class="relative group">
+                    <button class="hover:underline">Productos</button>
+                    <ul class="absolute hidden group-hover:block bg-white shadow-md rounded mt-2 w-48 text-left z-10">
+                        <li><a href="animales.html" class="block px-4 py-2 hover:bg-gray-100">Animales</a></li>
+                        <li><a href="halloween.html" class="block px-4 py-2 hover:bg-gray-100">Halloween</a></li>
+                        <li><a href="navidad.html" class="block px-4 py-2 hover:bg-gray-100">Navidad</a></li>
+                        <li>
+                            <hr class="my-1">
+                        </li>
+                        <li><a href="todasCat.html" class="block px-4 py-2 hover:bg-gray-100">Ver todas las categorías</a></li>
+                    </ul>
+                </li>
+                <li><a href="perfil.html" class="hover:underline">Perfil</a></li>
+                <li><a href="#" class="hover:underline">Contacto</a></li>
+                <li class="relative">
+                    <a href="carrito.html" class="hover:underline">
+                        🛒 Carrito
+                        <span id="cart-count"
+                            class="absolute -top-2 -right-4 bg-red-600 text-white rounded-full text-xs px-2 py-0.5">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="relative w-full overflow-hidden">
+        <div class="carousel-inner flex transition-transform duration-500" id="carousel">
+            <img src="promos/promo1.png" alt="Promoción 1" class="w-full flex-shrink-0">
+            <img src="promos/promo2.png" alt="Promoción 2" class="w-full flex-shrink-0">
+        </div>
+        <div class="absolute inset-0 flex justify-between items-center px-4">
+            <button onclick="prevSlide()" class="bg-white p-2 rounded-full shadow">‹</button>
+            <button onclick="nextSlide()" class="bg-white p-2 rounded-full shadow">›</button>
+        </div>
+    </div>
+
+    <div class="container mx-auto mt-10 px-4">
+        <h4 class="text-xl font-semibold mb-4">Vistos recientemente</h4>
+        <div class="slider-container">
+            <div id="recentScroll" class="recent-items"></div>
+        </div>
+    </div>
+
+    <script>
+        function scrollRecent(direction) {
+            const container = document.getElementById('recentScroll');
+            const scrollAmount = 220;
+            container.scrollLeft += direction * scrollAmount;
+        }
+
+        function mostrarVistos() {
+            const container = document.getElementById('recentScroll');
+            const vistos = JSON.parse(localStorage.getItem("vistos")) || [];
+
+            container.innerHTML = "";
+
+            for (const prod of vistos) {
+                const card = document.createElement("div");
+                card.className = "bg-white shadow rounded overflow-hidden w-48 flex flex-col justify-between";
+                card.innerHTML = `
+                    <img src="${prod.imagen}" alt="${prod.nombre}" class="card-img-top cursor-pointer">
+                    <div class="p-2 flex justify-center">
+                        <button class="bg-yellow-300 hover:bg-yellow-400 text-black font-semibold px-4 py-1 rounded">Ver producto</button>
+                    </div>
+                `;
+                const img = card.querySelector("img");
+                const btn = card.querySelector("button");
+
+                img.addEventListener("click", () => {
+                    localStorage.setItem("producto", JSON.stringify(prod));
+                    window.location.href = "producto.html";
+                });
+
+                btn.addEventListener("click", () => {
+                    localStorage.setItem("producto", JSON.stringify(prod));
+                    window.location.href = "producto.html";
+                });
+
+                container.appendChild(card);
+            }
+        }
+
+        mostrarVistos();
+
+        const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+        const cartCount = document.getElementById('cart-count');
+        if (cartCount) {
+            cartCount.textContent = carrito.length;
+        }
+
+        let currentIndex = 0;
+        const slides = document.querySelectorAll('#carousel img');
+
+        function updateCarousel() {
+            const offset = -currentIndex * 100;
+            document.getElementById('carousel').style.transform = `translateX(${offset}%)`;
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % slides.length;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            updateCarousel();
+        }
+
+        setInterval(nextSlide, 5000);
+    </script>
+</body>
+
+</html>

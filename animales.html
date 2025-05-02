@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Categoría Animales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #E292E5;
+        }
+
+        .favorite-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+        }
+
+        .favorite-btn.red {
+            color: red;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 text-xl font-bold">
+                <img src="gghdbh.jpg" alt="Logo" class="h-10">
+                <span>Crochetlandia</span>
+            </a>
+            <ul class="hidden md:flex space-x-6 items-center">
+                <li class="relative group">
+                    <button class="hover:underline">Productos</button>
+                    <ul class="absolute hidden group-hover:block bg-white shadow-md rounded mt-2 w-48 text-left z-10">
+                        <li><a href="animales.html" class="block px-4 py-2 hover:bg-gray-100">Animales</a></li>
+                        <li><a href="halloween.html" class="block px-4 py-2 hover:bg-gray-100">Halloween</a></li>
+                        <li><a href="navidad.html" class="block px-4 py-2 hover:bg-gray-100">Navidad</a></li>
+                        <li><hr class="my-1"></li>
+                        <li><a href="todasCat.html" class="block px-4 py-2 hover:bg-gray-100">Ver todas las categorías</a></li>
+                    </ul>
+                </li>
+                <li><a href="perfil.html" class="hover:underline">Perfil</a></li>
+                <li><a href="#" class="hover:underline">Contacto</a></li>
+                <li class="relative">
+                    <a href="carrito.html" class="hover:underline">
+                        🛒 Carrito
+                        <span id="cart-count" class="absolute -top-2 -right-4 bg-red-600 text-white rounded-full text-xs px-2 py-0.5">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto my-8 px-4">
+        <h2 class="text-3xl font-bold text-center mb-6">Animales</h2>
+        <div id="productosContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+    </div>
+
+    <script>
+        const productos = [
+            { id: 6, imagen: 'animales/gato.jpg', titulo: 'Gato 01', precio: '10' },
+            { id: 7, imagen: 'animales/perro.jpg', titulo: 'Perro 01', precio: '20' },
+            { id: 8, imagen: 'animales/pollo.jpg', titulo: 'Pollo 01', precio: '5' },
+        ];
+
+        const contenedor = document.getElementById('productosContainer');
+        const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+
+        productos.forEach((producto, index) => {
+            const esFavorito = favoritos.some(p => p.id === producto.id);
+            const card = document.createElement('div');
+            card.className = 'col';
+            card.innerHTML = `
+                <div class="card h-full relative bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="${producto.imagen}" class="w-full h-48 object-cover cursor-pointer" alt="${producto.titulo}" onclick="verProducto(${index})">
+                    <div class="p-4">
+                        <h5 class="text-xl font-semibold">${producto.titulo}</h5>
+                        <p class="text-lg text-gray-600">$${producto.precio} MXN</p>
+                    </div>
+                    <button class="favorite-btn absolute top-2 right-2 text-xl ${esFavorito ? 'text-red-600' : 'text-gray-600'}" onclick="toggleFavorito(this, ${producto.id})">
+                        &hearts;
+                    </button>
+                </div>
+            `;
+            contenedor.appendChild(card);
+        });
+
+        function verProducto(index) {
+            localStorage.setItem("producto", JSON.stringify(productos[index]));
+            window.location.href = "producto.html";
+        }
+
+        function toggleFavorito(btn, id) {
+            let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+            const producto = productos.find(p => p.id === id);
+            const index = favoritos.findIndex(p => p.id === id);
+
+            if (index > -1) {
+                favoritos.splice(index, 1);
+                btn.classList.remove("text-red-600");
+            } else {
+                favoritos.push(producto);
+                btn.classList.add("text-red-600");
+            }
+
+            localStorage.setItem("favoritos", JSON.stringify(favoritos));
+        }
+
+        const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+        const cartCount = document.getElementById('cart-count');
+        if (cartCount) {
+            cartCount.textContent = carrito.length;
+        }
+    </script>
+
+</body>
+
+</html>
